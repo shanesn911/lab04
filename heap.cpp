@@ -5,11 +5,11 @@
 #include <iostream>
 using std::cout;
 
-void Heap::bubbleUp(int index) {
+static void bubbleUp(std::vector<int>& v, int index) {
   while (index > 0) {
     int parent = (index - 1) / 2;
-    if (vdata[index] < vdata[parent]) {
-      std::swap(vdata[index], vdata[parent]);
+    if (v[index] < v[parent]) {
+      std::swap(v[index], v[parent]);
       index = parent;
     } else {
       break;
@@ -17,26 +17,23 @@ void Heap::bubbleUp(int index) {
   }
 }
 
-// Bubble a node DOWN toward the leaves to restore the heap property after pop
-// or during heapify.
-void Heap::bubbleDown(int index) {
-  int n = (int)vdata.size();
+static void bubbleDown(std::vector<int>& v, int index) {
+  int n = (int)v.size();
   while (true) {
     int left  = 2 * index + 1;
     int right = 2 * index + 2;
     int smallest = index;
-
-    if (left  < n && vdata[left]  < vdata[smallest]) smallest = left;
-    if (right < n && vdata[right] < vdata[smallest]) smallest = right;
-
+    if (left  < n && v[left]  < v[smallest]) smallest = left;
+    if (right < n && v[right] < v[smallest]) smallest = right;
     if (smallest != index) {
-      std::swap(vdata[index], vdata[smallest]);
+      std::swap(v[index], v[smallest]);
       index = smallest;
     } else {
       break;
     }
   }
 }
+ 
 
 
 // Builds a heap from the range [start, end) using Floyd's heapify algorithm.
@@ -45,14 +42,14 @@ Heap::Heap(std::vector<int>::iterator start, std::vector<int>::iterator end) {
   vdata.assign(start, end);                     // copy all values in
   int n = (int)vdata.size();
   for (int i = n / 2 - 1; i >= 0; --i) {
-    bubbleDown(i);
+    bubbleDown(vdata, i);
   }
 }
 
 // Pushes a value into the heap, then ensures the heap is correctly arranged.
 void Heap::push(int value) {
   vdata.push_back(value);
-  bubbleUp((int)vdata.size() - 1);
+  bubbleUp(vdata, (int)vdata.size() - 1);
 }
 
 // Pops the minimum value off the heap (does not return it),
@@ -62,7 +59,7 @@ void Heap::pop() {
   vdata[0] = vdata.back();
   vdata.pop_back();
   if (!vdata.empty()) {
-    bubbleDown(0);
+    bubbleDown(vdata, 0);
   }
 }
 
