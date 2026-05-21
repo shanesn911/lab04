@@ -8,6 +8,7 @@
 #include <ctime>
 #include <algorithm>
 #include <cassert>
+#include "heap.cpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
