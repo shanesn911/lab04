@@ -5,70 +5,60 @@
 #include <iostream>
 using std::cout;
 
-static void bubbleUp(std::vector<int>& v, int index) {
-  while (index > 0) {
-    int parent = (index - 1) / 2;
-    if (v[index] < v[parent]) {
-      std::swap(v[index], v[parent]);
-      index = parent;
-    } else {
-      break;
-    }
-  }
-}
-
-static void bubbleDown(std::vector<int>& v, int index) {
-  int n = (int)v.size();
-  while (true) {
-    int left  = 2 * index + 1;
-    int right = 2 * index + 2;
-    int smallest = index;
-    if (left  < n && v[left]  < v[smallest]) smallest = left;
-    if (right < n && v[right] < v[smallest]) smallest = right;
-    if (smallest != index) {
-      std::swap(v[index], v[smallest]);
-      index = smallest;
-    } else {
-      break;
-    }
-  }
-}
- 
-
-
-// Builds a heap from the range [start, end) using Floyd's heapify algorithm.
-// Runs in O(n) time.
 Heap::Heap(std::vector<int>::iterator start, std::vector<int>::iterator end) {
-  vdata.assign(start, end);                     // copy all values in
+  vdata.assign(start, end);
   int n = (int)vdata.size();
   for (int i = n / 2 - 1; i >= 0; --i) {
-    bubbleDown(vdata, i);
+    int index = i;
+    while (true) {
+      int left = 2 * index + 1;
+      int right = 2 * index + 2;
+      int smallest = index;
+      if (left < n && vdata[left] < vdata[smallest]) smallest = left;
+      if (right < n && vdata[right] < vdata[smallest]) smallest = right;
+      if (smallest != index) {
+        std::swap(vdata[index], vdata[smallest]);
+        index = smallest;
+      } else break;
+    }
   }
 }
 
-// Pushes a value into the heap, then ensures the heap is correctly arranged.
 void Heap::push(int value) {
   vdata.push_back(value);
-  bubbleUp(vdata, (int)vdata.size() - 1);
+  int index = (int)vdata.size() - 1;
+  while (index > 0) {
+    int parent = (index - 1) / 2;
+    if (vdata[index] < vdata[parent]) {
+      std::swap(vdata[index], vdata[parent]);
+      index = parent;
+    } else break;
+  }
 }
 
-// Pops the minimum value off the heap (does not return it),
-// then restores the heap property.
 void Heap::pop() {
   if (vdata.empty()) return;
   vdata[0] = vdata.back();
   vdata.pop_back();
-  if (!vdata.empty()) {
-    bubbleDown(vdata, 0);
+  int index = 0;
+  int n = (int)vdata.size();
+  while (true) {
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+    int smallest = index;
+    if (left < n && vdata[left] < vdata[smallest]) smallest = left;
+    if (right < n && vdata[right] < vdata[smallest]) smallest = right;
+    if (smallest != index) {
+      std::swap(vdata[index], vdata[smallest]);
+      index = smallest;
+    } else break;
   }
 }
 
-// Returns the minimum element (the root).
 int Heap::top() {
-  return vdata[0];
+    return vdata[0];
 }
 
-// Returns true if the heap is empty, false otherwise.
 bool Heap::empty() {
-  return vdata.empty();
+    return vdata.empty();
 }
